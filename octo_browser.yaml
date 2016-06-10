@@ -141,30 +141,6 @@ paths:
           description: Returns the UUID for the event
           schema:
             $ref: '#/definitions/BeaconResponse'
-  /update_push_token/:
-    post:
-      summary: Update push token for a user device.
-      description: Use this to update the tokens necessary for push notifications. This is exposed as a set of 3 attributes - notification type, push token and push key. Notification type should be 0 for iOS notification and 1 for android. Push token could be the GCM registration token or the APNS registration token for the app device. Push key is your app's GCM key or APN key. Userid is optional. If userid is not speficied, the gcm token is stored without a userid. If a userid gets updated for a gcm token in future, another call needs to be made mentioning the userid.
-      tags:
-        - push_notification
-      parameters:
-        - name: body
-          in: body
-          required: true
-          description: JSON object containing data
-          schema:
-            $ref: '#/definitions/UpdatePushToken'
-      security:
-        - apikey: []
-      responses:
-        200:
-          description: UUID of the event. You can use this UUID to trace an event.
-          schema:
-            $ref: '#/definitions/BeaconResponse'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
 definitions:
   BeaconResponse:
     description: Beacon response model
@@ -186,27 +162,22 @@ definitions:
       message:
         type: string
         example: Unable to process message
-  PhoneDetails:
-    description: Model for phone details of the user
+  BrowserDetails:
+    description: Model for browser details of the user
     type: object
     properties:
-      deviceId:
+      name:
         type: string
-        example: FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9
+        example: Chrome
+      platform:
+        type: string
+        example: Linux
       manufacturer:
         type: string
-        example: Apple
-      model:
+        example: Google
+      cookieid:
         type: string
-        example: iPhone 6
-      latitude:
-        type: number
-        format: float
-        example: 28.6139
-      longitude:
-        type: number
-        format: float
-        example: 77.2090
+        example: abc123
   Message:
     type: object
     description: Base message model. Every message must belong to this model
@@ -216,11 +187,11 @@ definitions:
         format: int32
         description: Unique User Id of the logged in user. Any unique tracking ID for logged out user.
         example: 2736482
-      phoneDetails:
-        $ref: '#/definitions/PhoneDetails'
+      browserDetails:
+        $ref: '#/definitions/BrowserDetails'
     required:
       - userId
-      - phoneDetails
+      - browserDetails
   PageViewMessage:
     type: object
     description: Model for page view message
@@ -277,31 +248,3 @@ definitions:
           - productId
           - productName
           - price
-  UpdatePushToken:
-    type: object
-    description: Model for update push token message
-    properties:
-      userId:
-        type: integer
-        format: int32
-        description: Unique User Id of the user.
-        example: 1146783
-      pushToken:
-        type: string
-        description: Push Token for the user-device. This could be either the GCM Token or the APN Token
-        example: "aKhsy762hHGSA90001S"
-      pushKey:
-        type: string
-        description: Your app's push notification key. This could be either your app's GCM key or your app's APN key.
-        example: aksjs:posiuujslaqhwns826262XYZ
-      notificationType:
-        type: integer
-        format: int32
-        example: 0
-        description: Set this to 1 for Android and 0 for iOS
-      phoneDetails:
-        $ref: '#/definitions/PhoneDetails'
-    required:
-      - pushToken
-      - notificationType
-      - phoneDetails
