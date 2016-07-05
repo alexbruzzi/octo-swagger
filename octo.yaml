@@ -165,6 +165,76 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
+  /product/:
+    post:
+      summary: Add a product 
+      description: Use this to update the product catalog by adding a product.
+      tags:
+        - add_product
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: JSON object containing data
+          schema:
+            $ref: '#/definitions/ProductMessage'
+      security:
+        - apikey: []
+      responses:
+        200:
+          description: UUID of the event. You can use this UUID to trace an event.
+          schema:
+            $ref: '#/definitions/BeaconResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    patch:
+      summary: Update a product 
+      description: Use this to update the product catalog by updating a product details.
+      tags:
+        - update_product
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: JSON object containing data
+          schema:
+            $ref: '#/definitions/ProductMessage'
+      security:
+        - apikey: []
+      responses:
+        200:
+          description: UUID of the event. You can use this UUID to trace an event.
+          schema:
+            $ref: '#/definitions/BeaconResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete a product 
+      description: Use this to update the product catalog by deleting a product.
+      tags:
+        - delete_product
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: JSON object containing data
+          schema:
+            $ref: '#/definitions/DeleteProductMessage'
+      security:
+        - apikey: []
+      responses:
+        200:
+          description: UUID of the event. You can use this UUID to trace an event.
+          schema:
+            $ref: '#/definitions/BeaconResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
 definitions:
   BeaconResponse:
     description: Beacon response model
@@ -305,3 +375,62 @@ definitions:
       - pushToken
       - notificationType
       - phoneDetails
+  ProductMessage:
+    type: object
+    description: Model for adding product
+    allOf:
+      - type: object
+        properties:
+          routeUrl:
+            type: string
+            description: Human readable unique routing Url for the page
+            example: /Home/DealsOfTheDay/34
+          categories:
+            type: array
+            items:
+              type: string
+              description: Text representation of the categories this page belongs to
+            example:
+              - shopping
+              - handbags
+              - rajasthani
+          tags:
+            type: array
+            items:
+              type: string
+              description: Text representation of the tags of the page
+            example:
+              - handbags
+              - aldo
+              - yellow
+          productId:
+            type: integer
+            format: int32
+            description: Unique Product ID of the product being viewed
+            example: 63726
+          productName:
+            type: string
+            description: Human understandable name of the product
+            example: Smartphone Series S01
+          price:
+            type: number
+            format: float
+            description: Price of the product
+            example: 99.99
+        required:
+          - productId
+          - productName
+          - price
+  DeleteProductMessage:
+    type: object
+    description: Model for deteling product
+    allOf:
+      - type: object
+        properties:
+          productId:
+            type: integer
+            format: int32
+            description: Unique Product ID of the product being viewed
+            example: 63726
+        required:
+          - productId
